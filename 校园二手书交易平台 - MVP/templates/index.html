@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 校园二手书交易{% endblock %}
+
+{% block content %}
+<!-- 搜索栏 -->
+<section class="search-section">
+    <form class="search-form" method="GET" action="{{ url_for('index') }}">
+        <input
+            type="text"
+            name="keyword"
+            class="search-input"
+            placeholder="🔍 输入书名搜索..."
+            value="{{ keyword }}"
+            autocomplete="off"
+        >
+        <button type="submit" class="btn btn-primary search-btn">搜索</button>
+        {% if keyword %}
+            <a href="{{ url_for('index') }}" class="btn btn-outline search-btn">清除</a>
+        {% endif %}
+    </form>
+</section>
+
+<!-- 统计信息 -->
+<div class="result-info">
+    {% if keyword %}
+        <p>搜索 "<strong>{{ keyword }}</strong>" 找到 <strong>{{ total }}</strong> 本书</p>
+    {% else %}
+        <p>共 <strong>{{ total }}</strong> 本在售</p>
+    {% endif %}
+</div>
+
+<!-- 书籍列表 -->
+{% if books %}
+    <section class="book-grid">
+        {% for book in books %}
+            <a href="{{ url_for('detail', book_id=book.id) }}" class="book-card">
+                <div class="book-card-img">
+                    {% if book.image_url %}
+                        <img src="{{ url_for('static', filename=book.image_url) }}" alt="{{ book.title }}" loading="lazy">
+                    {% else %}
+                        <div class="book-card-placeholder">📖</div>
+                    {% endif %}
+                </div>
+                <div class="book-card-body">
+                    <h3 class="book-card-title">{{ book.title }}</h3>
+                    <div class="book-card-price">
+                        <span class="price-current">¥{{ "%.2f"|format(book.price) }}</span>
+                        {% if book.original_price and book.original_price > 0 %}
+                            <span class="price-original">¥{{ "%.2f"|format(book.original_price) }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="book-card-meta">
+                        <span>{{ book.seller_nickname }}</span>
+                        <span>{{ book.created_at[:10] }}</span>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </section>
+
+    <!-- 分页 -->
+    {% if total_pages > 1 %}
+        <nav class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('index', keyword=keyword, page=page-1) }}" class="btn btn-outline">上一页</a>
+            {% endif %}
+            <span class="page-info">{{ page }} / {{ total_pages }}</span>
+            {% if page < total_pages %}
+                <a href="{{ url_for('index', keyword=keyword, page=page+1) }}" class="btn btn-outline">下一页</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="empty-state">
+        <p>📭 暂无在售书籍</p>
+        {% if session.user_id %}
+            <a href="{{ url_for('publish') }}" class="btn btn-primary">去发布第一本书</a>
+        {% else %}
+            <p>登录后即可发布闲置书籍</p>
+            <a href="{{ url_for('login') }}" class="btn btn-primary">去登录</a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

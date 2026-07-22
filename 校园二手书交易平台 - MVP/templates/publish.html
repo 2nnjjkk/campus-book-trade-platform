@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}发布书籍 - 校园二手书交易{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-card">
+        <h2 class="form-title">📦 发布二手书</h2>
+
+        <form method="POST" action="{{ url_for('publish') }}" enctype="multipart/form-data" class="auth-form">
+            <div class="form-group">
+                <label for="title">书名 <span class="required">*</span></label>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    class="form-input"
+                    placeholder="请输入书名"
+                    required
+                >
+            </div>
+
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="price">售价 <span class="required">*</span></label>
+                    <input
+                        type="number"
+                        id="price"
+                        name="price"
+                        class="form-input"
+                        placeholder="¥ 0.00"
+                        step="0.01"
+                        min="0.01"
+                        required
+                    >
+                </div>
+
+                <div class="form-group form-group-half">
+                    <label for="original_price">原价</label>
+                    <input
+                        type="number"
+                        id="original_price"
+                        name="original_price"
+                        class="form-input"
+                        placeholder="¥ 0.00（选填）"
+                        step="0.01"
+                        min="0"
+                    >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">新旧程度 / 使用情况</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    class="form-input form-textarea"
+                    placeholder="描述书籍的新旧程度、笔记情况等（选填）"
+                    rows="3"
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="contact">联系方式 <span class="required">*</span></label>
+                <input
+                    type="text"
+                    id="contact"
+                    name="contact"
+                    class="form-input"
+                    placeholder="手机号 / 微信号（买家将通过此方式联系你）"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="image">书籍图片</label>
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    class="form-input form-file"
+                    accept="image/png,image/jpeg,image/gif,image/webp"
+                >
+                <small class="form-hint">支持 PNG / JPG / GIF / WebP，大小不超过 5MB（选填）</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">发 布</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

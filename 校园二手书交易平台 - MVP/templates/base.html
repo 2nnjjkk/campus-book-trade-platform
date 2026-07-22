@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}校园二手书交易{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <a href="{{ url_for('index') }}" class="nav-brand">📚 校园二手书</a>
+            <div class="nav-links">
+                {% if session.user_id %}
+                    <span class="nav-user">👤 {{ session.nickname }}</span>
+                    <a href="{{ url_for('publish') }}" class="btn btn-primary btn-sm">发布</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline btn-sm">退出</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm">登录</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">注册</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash 消息 -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container flash-container">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- 主要内容 -->
+    <main class="container main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="container">
+            <p>校园二手书交易平台 © 2024 — 仅提供信息展示，交易请自行联系</p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

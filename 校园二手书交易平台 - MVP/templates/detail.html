@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }} - 校园二手书交易{% endblock %}
+
+{% block content %}
+<div class="detail-page">
+    <!-- 返回 -->
+    <a href="{{ url_for('index') }}" class="back-link">← 返回列表</a>
+
+    <!-- 图片 -->
+    <div class="detail-img">
+        {% if book.image_url %}
+            <img src="{{ url_for('static', filename=book.image_url) }}" alt="{{ book.title }}">
+        {% else %}
+            <div class="detail-img-placeholder">📖</div>
+        {% endif %}
+    </div>
+
+    <!-- 基本信息 -->
+    <div class="detail-card">
+        <h1 class="detail-title">{{ book.title }}</h1>
+
+        <div class="detail-price-row">
+            <span class="detail-price">¥{{ "%.2f"|format(book.price) }}</span>
+            {% if book.original_price and book.original_price > 0 %}
+                <span class="detail-original-price">原价 ¥{{ "%.2f"|format(book.original_price) }}</span>
+            {% endif %}
+        </div>
+
+        {% if book.description %}
+            <div class="detail-section">
+                <h3>📝 书籍描述</h3>
+                <p class="detail-description">{{ book.description }}</p>
+            </div>
+        {% endif %}
+
+        <div class="detail-section">
+            <h3>👤 卖家信息</h3>
+            <p>昵称：{{ book.seller_nickname }}</p>
+        </div>
+
+        <div class="detail-section">
+            <h3>🕐 发布时间</h3>
+            <p>{{ book.created_at }}</p>
+        </div>
+
+        <div class="detail-section">
+            <h3>📞 联系方式</h3>
+            <div class="contact-box">
+                <span class="contact-text">{{ book.contact }}</span>
+                <button class="btn btn-primary btn-sm" onclick="copyContact()" id="copyBtn">
+                    📋 一键复制
+                </button>
+            </div>
+            <small class="form-hint">复制后请到微信/拨号应用联系卖家，线下完成交易</small>
+        </div>
+
+        {% if session.user_id == book.user_id %}
+            <div class="detail-actions">
+                <form method="POST" action="{{ url_for('toggle_status', book_id=book.id) }}">
+                    {% if book.status == 1 %}
+                        <button type="submit" class="btn btn-danger">下架该书</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary">重新上架</button>
+                    {% endif %}
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyContact() {
+    const contact = document.querySelector('.contact-text').textContent;
+    navigator.clipboard.writeText(contact).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = '✅ 已复制';
+        btn.classList.add('btn-success');
+        setTimeout(() => {
+            btn.textContent = '📋 一键复制';
+            btn.classList.remove('btn-success');
+        }, 2000);
+    }).catch(() => {
+        // 降级方案：选中文本
+        const range = document.createRange();
+        range.selectNode(document.querySelector('.contact-text'));
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        alert('请手动复制：' + contact);
+    });
+}
+</script>
+{% endblock %}
